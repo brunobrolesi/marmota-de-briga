@@ -23,9 +23,9 @@ func (_m *MockTransactionRepository) EXPECT() *MockTransactionRepository_Expecte
 	return &MockTransactionRepository_Expecter{mock: &_m.Mock}
 }
 
-// CreateTransaction provides a mock function with given fields: ctx, clientID, value, transaction_type, description
-func (_m *MockTransactionRepository) CreateTransaction(ctx context.Context, clientID model.ClientID, value int, transaction_type model.TransactionType, description string) (*model.Transaction, error) {
-	ret := _m.Called(ctx, clientID, value, transaction_type, description)
+// CreateTransaction provides a mock function with given fields: ctx, clientID, value, transactionType, description
+func (_m *MockTransactionRepository) CreateTransaction(ctx context.Context, clientID int, value int, transactionType model.TransactionType, description string) (*model.Transaction, error) {
+	ret := _m.Called(ctx, clientID, value, transactionType, description)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateTransaction")
@@ -33,19 +33,19 @@ func (_m *MockTransactionRepository) CreateTransaction(ctx context.Context, clie
 
 	var r0 *model.Transaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, model.ClientID, int, model.TransactionType, string) (*model.Transaction, error)); ok {
-		return rf(ctx, clientID, value, transaction_type, description)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType, string) (*model.Transaction, error)); ok {
+		return rf(ctx, clientID, value, transactionType, description)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, model.ClientID, int, model.TransactionType, string) *model.Transaction); ok {
-		r0 = rf(ctx, clientID, value, transaction_type, description)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType, string) *model.Transaction); ok {
+		r0 = rf(ctx, clientID, value, transactionType, description)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Transaction)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, model.ClientID, int, model.TransactionType, string) error); ok {
-		r1 = rf(ctx, clientID, value, transaction_type, description)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, model.TransactionType, string) error); ok {
+		r1 = rf(ctx, clientID, value, transactionType, description)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -60,17 +60,17 @@ type MockTransactionRepository_CreateTransaction_Call struct {
 
 // CreateTransaction is a helper method to define mock.On call
 //   - ctx context.Context
-//   - clientID model.ClientID
+//   - clientID int
 //   - value int
-//   - transaction_type model.TransactionType
+//   - transactionType model.TransactionType
 //   - description string
-func (_e *MockTransactionRepository_Expecter) CreateTransaction(ctx interface{}, clientID interface{}, value interface{}, transaction_type interface{}, description interface{}) *MockTransactionRepository_CreateTransaction_Call {
-	return &MockTransactionRepository_CreateTransaction_Call{Call: _e.mock.On("CreateTransaction", ctx, clientID, value, transaction_type, description)}
+func (_e *MockTransactionRepository_Expecter) CreateTransaction(ctx interface{}, clientID interface{}, value interface{}, transactionType interface{}, description interface{}) *MockTransactionRepository_CreateTransaction_Call {
+	return &MockTransactionRepository_CreateTransaction_Call{Call: _e.mock.On("CreateTransaction", ctx, clientID, value, transactionType, description)}
 }
 
-func (_c *MockTransactionRepository_CreateTransaction_Call) Run(run func(ctx context.Context, clientID model.ClientID, value int, transaction_type model.TransactionType, description string)) *MockTransactionRepository_CreateTransaction_Call {
+func (_c *MockTransactionRepository_CreateTransaction_Call) Run(run func(ctx context.Context, clientID int, value int, transactionType model.TransactionType, description string)) *MockTransactionRepository_CreateTransaction_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(model.ClientID), args[2].(int), args[3].(model.TransactionType), args[4].(string))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(model.TransactionType), args[4].(string))
 	})
 	return _c
 }
@@ -80,7 +80,7 @@ func (_c *MockTransactionRepository_CreateTransaction_Call) Return(_a0 *model.Tr
 	return _c
 }
 
-func (_c *MockTransactionRepository_CreateTransaction_Call) RunAndReturn(run func(context.Context, model.ClientID, int, model.TransactionType, string) (*model.Transaction, error)) *MockTransactionRepository_CreateTransaction_Call {
+func (_c *MockTransactionRepository_CreateTransaction_Call) RunAndReturn(run func(context.Context, int, int, model.TransactionType, string) (*model.Transaction, error)) *MockTransactionRepository_CreateTransaction_Call {
 	_c.Call.Return(run)
 	return _c
 }

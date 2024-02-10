@@ -16,7 +16,7 @@ type InputCreateTransaction struct {
 }
 
 type CreateTransactionUseCase interface {
-	Execute(ctx context.Context, input *InputCreateTransaction) (*model.Transaction, error)
+	Execute(ctx context.Context, input *InputCreateTransaction) (*model.Client, error)
 }
 
 type createTransactionUseCase struct {
@@ -34,10 +34,10 @@ func NewCreateTransactionUseCase(
 	}
 }
 
-func (c *createTransactionUseCase) Execute(ctx context.Context, input *InputCreateTransaction) (*model.Transaction, error) {
-	client, err := c.clientRepository.GetClient(ctx, input.ClientID)
+func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCreateTransaction) (*model.Client, error) {
+	client, err := uc.clientRepository.GetClient(ctx, input.ClientID)
 	if err != nil {
-		fmt.Println("error getting client limit", err)
+		fmt.Println("error getting client", err)
 		return nil, model.ErrInternalServerError
 	}
 
@@ -46,11 +46,17 @@ func (c *createTransactionUseCase) Execute(ctx context.Context, input *InputCrea
 		return nil, model.ErrClientLimitExceeded
 	}
 
-	transaction, err := c.transactionRepository.CreateTransaction(ctx, input.ClientID, input.Value, input.Type, input.Description)
+	updatedClient, err := uc.clientRepository.UpdateBalance(ctx, input.ClientID, input.Value, input.Type)
+	if err != nil {
+		fmt.Println("error updating client balance", err)
+		return nil, model.ErrInternalServerError
+	}
+
+	_, err = uc.transactionRepository.CreateTransaction(ctx, input.ClientID, input.Value, input.Type, input.Description)
 	if err != nil {
 		fmt.Println("error creating transaction", err)
 		return nil, model.ErrInternalServerError
 	}
 
-	return transaction, nil
+	return updatedClient, nil
 }

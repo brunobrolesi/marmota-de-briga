@@ -85,6 +85,66 @@ func (_c *MockTransactionRepository_CreateTransaction_Call) RunAndReturn(run fun
 	return _c
 }
 
+// GetLastTransactions provides a mock function with given fields: ctx, clientID, limit
+func (_m *MockTransactionRepository) GetLastTransactions(ctx context.Context, clientID int, limit int) ([]model.Transaction, error) {
+	ret := _m.Called(ctx, clientID, limit)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetLastTransactions")
+	}
+
+	var r0 []model.Transaction
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]model.Transaction, error)); ok {
+		return rf(ctx, clientID, limit)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) []model.Transaction); ok {
+		r0 = rf(ctx, clientID, limit)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]model.Transaction)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, clientID, limit)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockTransactionRepository_GetLastTransactions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLastTransactions'
+type MockTransactionRepository_GetLastTransactions_Call struct {
+	*mock.Call
+}
+
+// GetLastTransactions is a helper method to define mock.On call
+//   - ctx context.Context
+//   - clientID int
+//   - limit int
+func (_e *MockTransactionRepository_Expecter) GetLastTransactions(ctx interface{}, clientID interface{}, limit interface{}) *MockTransactionRepository_GetLastTransactions_Call {
+	return &MockTransactionRepository_GetLastTransactions_Call{Call: _e.mock.On("GetLastTransactions", ctx, clientID, limit)}
+}
+
+func (_c *MockTransactionRepository_GetLastTransactions_Call) Run(run func(ctx context.Context, clientID int, limit int)) *MockTransactionRepository_GetLastTransactions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int), args[2].(int))
+	})
+	return _c
+}
+
+func (_c *MockTransactionRepository_GetLastTransactions_Call) Return(_a0 []model.Transaction, _a1 error) *MockTransactionRepository_GetLastTransactions_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockTransactionRepository_GetLastTransactions_Call) RunAndReturn(run func(context.Context, int, int) ([]model.Transaction, error)) *MockTransactionRepository_GetLastTransactions_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockTransactionRepository creates a new instance of MockTransactionRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockTransactionRepository(t interface {

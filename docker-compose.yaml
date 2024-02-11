@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  scylla-db:
+    image: scylladb/scylla
+    container_name: scylla-db
+    hostname: scylla-db
+    networks:
+      - backend
+    ports:
+    - "9042:9042"
+    - "9160:9160"
+    - "10000:10000"
+    tty: true
+
+  go-api:
+    build: 
+      context: .
+    container_name: go-api
+    entrypoint: wait-for scylla-db:9042 -t 120 -- ./marmota-de-briga
+    networks:
+      - backend
+    depends_on:
+      - scylla-db
+    ports:
+      - "8080:8080"
+
+networks:
+  backend:
+    driver: bridge

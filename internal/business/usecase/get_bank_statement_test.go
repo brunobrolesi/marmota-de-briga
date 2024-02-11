@@ -68,7 +68,7 @@ func TestGetBankStatementUseCase(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 1000, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), model.ClientID(1)).Return(client, nil).Once()
 		testSuite.TransactionRepository.On("GetLastTransactions", context.Background(), model.ClientID(1), model.TRANSACTIONS_LIMIT).Return(nil, model.ErrInternalServerError).Once()
 		got, err := testSuite.Sut.Execute(context.Background(), input)
@@ -82,7 +82,7 @@ func TestGetBankStatementUseCase(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 1000, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), model.ClientID(1)).Return(client, nil).Once()
 		transactions := makeTransactions()
 		testSuite.TransactionRepository.On("GetLastTransactions", context.Background(), model.ClientID(1), model.TRANSACTIONS_LIMIT).Return(transactions, nil).Once()
@@ -93,9 +93,9 @@ func TestGetBankStatementUseCase(t *testing.T) {
 
 		expected := &model.BankStatement{
 			Balance: model.BankStatementBalance{
-				Total:     model.MonetaryValue(client.Balance),
+				Total:     model.MonetaryValue(client.AccountBalance),
 				CreatedAt: got.Balance.CreatedAt,
-				Limit:     model.MonetaryValue(client.Limit),
+				Limit:     model.MonetaryValue(client.AccountLimit),
 			},
 			Transactions: model.ToBankStatementTransactions(transactions),
 		}

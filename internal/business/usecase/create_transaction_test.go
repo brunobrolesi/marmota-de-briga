@@ -54,7 +54,7 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 10, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 10, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
@@ -68,7 +68,7 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 10, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 10, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
@@ -82,7 +82,7 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 1000, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
 		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(nil, model.ErrInternalServerError).Once()
 
@@ -98,9 +98,9 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 1000, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		updatedClient := &model.Client{ID: input.ClientID, Limit: 1000, Balance: -100}
+		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
 		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(updatedClient, nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(nil, model.ErrInternalServerError).Once()
 
@@ -117,10 +117,10 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, Limit: 1000, Balance: 0}
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		transaction := &model.Transaction{ID: 1, ClientID: input.ClientID, Value: input.Value, Type: input.Type, Description: input.Description}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		updatedClient := &model.Client{ID: input.ClientID, Limit: 1000, Balance: -100}
+		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
 		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(updatedClient, nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(transaction, nil).Once()
 

@@ -50,9 +50,9 @@ func (uc *getBankStatementUseCase) Execute(ctx context.Context, input *InputGetB
 	}
 
 	balance := model.BankStatementBalance{
-		Total:     model.MonetaryValue(client.Balance),
+		Total:     model.MonetaryValue(client.AccountBalance),
 		CreatedAt: time.Now(),
-		Limit:     client.Limit,
+		Limit:     client.AccountLimit,
 	}
 
 	bankStatement := &model.BankStatement{

@@ -41,7 +41,7 @@ func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCre
 		return nil, model.ErrInternalServerError
 	}
 
-	if client.Balance.CanNotReceiveTransaction(input.Value, client.Limit, input.Type) {
+	if client.AccountBalance.CanNotReceiveTransaction(input.Value, client.AccountLimit, input.Type) {
 		fmt.Println("client limit exceeded")
 		return nil, model.ErrClientLimitExceeded
 	}

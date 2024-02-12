@@ -82,34 +82,22 @@ func (_c *MockClientRepository_GetClient_Call) RunAndReturn(run func(context.Con
 	return _c
 }
 
-// UpdateBalance provides a mock function with given fields: ctx, clientID, transactionValue, transactionType
-func (_m *MockClientRepository) UpdateBalance(ctx context.Context, clientID int, transactionValue int, transactionType model.TransactionType) (*model.Client, error) {
-	ret := _m.Called(ctx, clientID, transactionValue, transactionType)
+// UpdateBalance provides a mock function with given fields: ctx, clientID, newBalance
+func (_m *MockClientRepository) UpdateBalance(ctx context.Context, clientID int, newBalance model.ClientBalance) error {
+	ret := _m.Called(ctx, clientID, newBalance)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateBalance")
 	}
 
-	var r0 *model.Client
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType) (*model.Client, error)); ok {
-		return rf(ctx, clientID, transactionValue, transactionType)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType) *model.Client); ok {
-		r0 = rf(ctx, clientID, transactionValue, transactionType)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, model.ClientBalance) error); ok {
+		r0 = rf(ctx, clientID, newBalance)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*model.Client)
-		}
+		r0 = ret.Error(0)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, int, model.TransactionType) error); ok {
-		r1 = rf(ctx, clientID, transactionValue, transactionType)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // MockClientRepository_UpdateBalance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateBalance'
@@ -120,25 +108,24 @@ type MockClientRepository_UpdateBalance_Call struct {
 // UpdateBalance is a helper method to define mock.On call
 //   - ctx context.Context
 //   - clientID int
-//   - transactionValue int
-//   - transactionType model.TransactionType
-func (_e *MockClientRepository_Expecter) UpdateBalance(ctx interface{}, clientID interface{}, transactionValue interface{}, transactionType interface{}) *MockClientRepository_UpdateBalance_Call {
-	return &MockClientRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, clientID, transactionValue, transactionType)}
+//   - newBalance model.ClientBalance
+func (_e *MockClientRepository_Expecter) UpdateBalance(ctx interface{}, clientID interface{}, newBalance interface{}) *MockClientRepository_UpdateBalance_Call {
+	return &MockClientRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, clientID, newBalance)}
 }
 
-func (_c *MockClientRepository_UpdateBalance_Call) Run(run func(ctx context.Context, clientID int, transactionValue int, transactionType model.TransactionType)) *MockClientRepository_UpdateBalance_Call {
+func (_c *MockClientRepository_UpdateBalance_Call) Run(run func(ctx context.Context, clientID int, newBalance model.ClientBalance)) *MockClientRepository_UpdateBalance_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(model.TransactionType))
+		run(args[0].(context.Context), args[1].(int), args[2].(model.ClientBalance))
 	})
 	return _c
 }
 
-func (_c *MockClientRepository_UpdateBalance_Call) Return(_a0 *model.Client, _a1 error) *MockClientRepository_UpdateBalance_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockClientRepository_UpdateBalance_Call) Return(_a0 error) *MockClientRepository_UpdateBalance_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockClientRepository_UpdateBalance_Call) RunAndReturn(run func(context.Context, int, int, model.TransactionType) (*model.Client, error)) *MockClientRepository_UpdateBalance_Call {
+func (_c *MockClientRepository_UpdateBalance_Call) RunAndReturn(run func(context.Context, int, model.ClientBalance) error) *MockClientRepository_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

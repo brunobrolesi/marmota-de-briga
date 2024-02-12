@@ -84,12 +84,12 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 
 		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(nil, model.ErrInternalServerError).Once()
+		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100)).Return(model.ErrInternalServerError).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
 		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
+		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100))
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrInternalServerError.Error())
 	})
@@ -100,14 +100,13 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 
 		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(updatedClient, nil).Once()
+		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100)).Return(nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(nil, model.ErrInternalServerError).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
 		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
+		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100))
 		testSuite.TransactionRepository.AssertCalled(t, "CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description)
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrInternalServerError.Error())
@@ -121,13 +120,13 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		transaction := &model.Transaction{ID: 1, ClientID: input.ClientID, Value: input.Value, Type: input.Type, Description: input.Description}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
 		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(updatedClient, nil).Once()
+		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100)).Return(nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(transaction, nil).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
 		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
+		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100))
 		testSuite.TransactionRepository.AssertCalled(t, "CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description)
 		assert.Nil(t, err)
 		assert.Equal(t, updatedClient, got)

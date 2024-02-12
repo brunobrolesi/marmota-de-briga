@@ -20,3 +20,13 @@ func (c *ClientBalance) CanReceiveTransaction(transactionValue MonetaryValue, cl
 func (c *ClientBalance) CanNotReceiveTransaction(transactionValue MonetaryValue, clientLimit MonetaryValue, transactionType TransactionType) bool {
 	return !c.CanReceiveTransaction(transactionValue, clientLimit, transactionType)
 }
+
+func (c *ClientBalance) AddTransaction(transactionValue MonetaryValue, transactionType TransactionType) {
+	if transactionType == Credit {
+		*c = ClientBalance(MonetaryValue(*c) + transactionValue)
+		return
+	}
+
+	*c = ClientBalance(MonetaryValue(*c) - transactionValue)
+
+}

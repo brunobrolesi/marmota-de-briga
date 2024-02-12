@@ -8,5 +8,5 @@ import (
 
 type ClientRepository interface {
 	GetClient(ctx context.Context, clientID model.ClientID) (*model.Client, error)
-	UpdateBalance(ctx context.Context, clientID model.ClientID, transactionValue model.MonetaryValue, transactionType model.TransactionType) (*model.Client, error)
+	UpdateBalance(ctx context.Context, clientID model.ClientID, newBalance model.ClientBalance) error
 }

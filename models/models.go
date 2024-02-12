@@ -77,7 +77,7 @@ type ClientsStruct struct {
 }
 type ClienttransactionindexIndexStruct struct {
 	ClientId int32
-	Id       int32
+	Id       [16]byte
 	IdxToken int64
 }
 type GocqlxMigrateStruct struct {
@@ -91,7 +91,7 @@ type TransactionsStruct struct {
 	ClientId    int32
 	CreatedAt   time.Time
 	Description string
-	Id          int32
+	Id          [16]byte
 	Type        string
 	Value       int32
 }

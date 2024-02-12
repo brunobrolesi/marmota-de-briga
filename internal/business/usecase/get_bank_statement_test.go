@@ -7,6 +7,7 @@ import (
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/usecase"
 	mock_gateway "github.com/brunobrolesi/marmota-de-briga/mocks/internal_/business/gateway"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,10 +36,10 @@ func TestGetBankStatementUseCase(t *testing.T) {
 
 	makeTransactions := func() []model.Transaction {
 		return []model.Transaction{
-			{ID: 1, ClientID: 1, Value: 100, Type: model.Debit, Description: "any_description"},
-			{ID: 2, ClientID: 1, Value: 200, Type: model.Credit, Description: "any_description"},
-			{ID: 3, ClientID: 1, Value: 300, Type: model.Debit, Description: "any_description"},
-			{ID: 4, ClientID: 1, Value: 400, Type: model.Credit, Description: "any_description"},
+			{ID: uuid.New(), ClientID: 1, Value: 100, Type: model.Debit, Description: "any_description"},
+			{ID: uuid.New(), ClientID: 1, Value: 200, Type: model.Credit, Description: "any_description"},
+			{ID: uuid.New(), ClientID: 1, Value: 300, Type: model.Debit, Description: "any_description"},
+			{ID: uuid.New(), ClientID: 1, Value: 400, Type: model.Credit, Description: "any_description"},
 		}
 
 	}

@@ -1,8 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
-type TransactionID = int
+type TransactionID = [16]byte
 
 type Transaction struct {
 	ID          TransactionID

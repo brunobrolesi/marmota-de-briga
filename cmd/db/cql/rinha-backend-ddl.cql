@@ -6,7 +6,7 @@ CREATE TABLE clients (
  );
 
 CREATE TABLE transactions (
-     id int,
+     id uuid,
      client_id int,
      value int,
      type text,

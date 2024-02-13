@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
@@ -9,9 +10,9 @@ import (
 )
 
 type CreateTransactionRequestBody struct {
-	Value       model.MonetaryValue   `json:"valor"`
-	Type        model.TransactionType `json:"tipo"`
-	Description string                `json:"descricao"`
+	Value       int    `json:"valor"`
+	Type        string `json:"tipo"`
+	Description string `json:"descricao"`
 }
 
 type CreateTransactionResponseBody struct {
@@ -37,19 +38,28 @@ func (h *createTransactionHandler) Handle(c *fiber.Ctx) error {
 
 	clientID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": model.ErrClientNotFound.Error()})
 	}
 
 	i := &usecase.InputCreateTransaction{
 		ClientID:    clientID,
-		Value:       body.Value,
-		Type:        body.Type,
+		Value:       model.MonetaryValue(body.Value),
+		Type:        model.TransactionType(body.Type),
 		Description: body.Description,
 	}
 
 	client, err := h.createTransactionUsecase.Execute(c.Context(), i)
+
+	if errors.Is(err, model.ErrClientNotFound) {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": err.Error()})
+	}
+
+	if errors.Is(err, model.ErrClientLimitExceeded) {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"message": err.Error()})
+	}
+
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 	}
 
 	response := &CreateTransactionResponseBody{

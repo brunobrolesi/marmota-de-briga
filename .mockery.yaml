@@ -8,3 +8,6 @@ packages:
   github.com/brunobrolesi/marmota-de-briga/internal/business/gateway:
     config:
       recursive: True
+  github.com/brunobrolesi/marmota-de-briga/internal/business/usecase:
+    config:
+      recursive: True

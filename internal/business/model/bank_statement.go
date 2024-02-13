@@ -5,21 +5,21 @@ import "time"
 const TRANSACTIONS_LIMIT uint = 10
 
 type BankStatementBalance struct {
-	Total     MonetaryValue
-	CreatedAt time.Time
-	Limit     MonetaryValue
+	Total     MonetaryValue `json:"total"`
+	CreatedAt time.Time     `json:"data_extrato"`
+	Limit     MonetaryValue `json:"limite"`
 }
 
 type BankStatementTransaction struct {
-	Value       MonetaryValue
-	Type        TransactionType
-	Description string
-	CreatedAt   time.Time
+	Value       MonetaryValue   `json:"valor"`
+	Type        TransactionType `json:"tipo"`
+	Description string          `json:"descricao"`
+	CreatedAt   time.Time       `json:"realizada_em"`
 }
 
 type BankStatement struct {
-	Balance      BankStatementBalance
-	Transactions []BankStatementTransaction
+	Balance      BankStatementBalance       `json:"saldo"`
+	Transactions []BankStatementTransaction `json:"ultimas_transacoes"`
 }
 
 func ToBankStatementTransactions(transactions []Transaction) []BankStatementTransaction {

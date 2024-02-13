@@ -10,10 +10,11 @@ import (
 func StartApp() {
 	app := fiber.New()
 
-	h := factory.CreateTransactionFactory()
+	handlerCreateTransaction := factory.CreateTransactionFactory()
+	handlerGetBankStatement := factory.GetBankStatementFactory()
 
-	app.Post("/clientes/:id/transacoes", h.Handle)
-	app.Get("/clientes/:id/extrato", nil)
+	app.Post("/clientes/:id/transacoes", handlerCreateTransaction.Handle)
+	app.Get("/clientes/:id/extrato", handlerGetBankStatement.Handle)
 
 	log.Fatal(app.Listen(":8080"))
 }

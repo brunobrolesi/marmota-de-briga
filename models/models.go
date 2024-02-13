@@ -22,22 +22,6 @@ var (
 		SortKey: []string{},
 	})
 
-	ClienttransactionindexIndex = table.New(table.Metadata{
-		Name: "clienttransactionindex_index",
-		Columns: []string{
-			"client_id",
-			"id",
-			"idx_token",
-		},
-		PartKey: []string{
-			"client_id",
-		},
-		SortKey: []string{
-			"idx_token",
-			"id",
-		},
-	})
-
 	GocqlxMigrate = table.New(table.Metadata{
 		Name: "gocqlx_migrate",
 		Columns: []string{
@@ -64,9 +48,11 @@ var (
 			"value",
 		},
 		PartKey: []string{
-			"id",
+			"client_id",
 		},
-		SortKey: []string{},
+		SortKey: []string{
+			"created_at",
+		},
 	})
 )
 
@@ -74,11 +60,6 @@ type ClientsStruct struct {
 	AccountBalance int32
 	AccountLimit   int32
 	Id             int32
-}
-type ClienttransactionindexIndexStruct struct {
-	ClientId int32
-	Id       [16]byte
-	IdxToken int64
 }
 type GocqlxMigrateStruct struct {
 	Checksum  string

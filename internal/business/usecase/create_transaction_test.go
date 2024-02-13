@@ -7,7 +7,6 @@ import (
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/usecase"
 	mock_gateway "github.com/brunobrolesi/marmota-de-briga/mocks/internal_/business/gateway"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -118,7 +117,7 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		input := makeInput()
 
 		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
-		transaction := &model.Transaction{ID: uuid.New(), ClientID: input.ClientID, Value: input.Value, Type: input.Type, Description: input.Description}
+		transaction := &model.Transaction{ClientID: input.ClientID, Value: input.Value, Type: input.Type, Description: input.Description}
 		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
 		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
 		testSuite.ClientRepository.On("UpdateBalance", context.Background(), input.ClientID, model.ClientBalance(-100)).Return(nil).Once()

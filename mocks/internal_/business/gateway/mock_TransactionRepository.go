@@ -86,7 +86,7 @@ func (_c *MockTransactionRepository_CreateTransaction_Call) RunAndReturn(run fun
 }
 
 // GetLastTransactions provides a mock function with given fields: ctx, clientID, limit
-func (_m *MockTransactionRepository) GetLastTransactions(ctx context.Context, clientID int, limit int) ([]model.Transaction, error) {
+func (_m *MockTransactionRepository) GetLastTransactions(ctx context.Context, clientID int, limit uint) ([]model.Transaction, error) {
 	ret := _m.Called(ctx, clientID, limit)
 
 	if len(ret) == 0 {
@@ -95,10 +95,10 @@ func (_m *MockTransactionRepository) GetLastTransactions(ctx context.Context, cl
 
 	var r0 []model.Transaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]model.Transaction, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, uint) ([]model.Transaction, error)); ok {
 		return rf(ctx, clientID, limit)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) []model.Transaction); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, uint) []model.Transaction); ok {
 		r0 = rf(ctx, clientID, limit)
 	} else {
 		if ret.Get(0) != nil {
@@ -106,7 +106,7 @@ func (_m *MockTransactionRepository) GetLastTransactions(ctx context.Context, cl
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, int, uint) error); ok {
 		r1 = rf(ctx, clientID, limit)
 	} else {
 		r1 = ret.Error(1)
@@ -123,14 +123,14 @@ type MockTransactionRepository_GetLastTransactions_Call struct {
 // GetLastTransactions is a helper method to define mock.On call
 //   - ctx context.Context
 //   - clientID int
-//   - limit int
+//   - limit uint
 func (_e *MockTransactionRepository_Expecter) GetLastTransactions(ctx interface{}, clientID interface{}, limit interface{}) *MockTransactionRepository_GetLastTransactions_Call {
 	return &MockTransactionRepository_GetLastTransactions_Call{Call: _e.mock.On("GetLastTransactions", ctx, clientID, limit)}
 }
 
-func (_c *MockTransactionRepository_GetLastTransactions_Call) Run(run func(ctx context.Context, clientID int, limit int)) *MockTransactionRepository_GetLastTransactions_Call {
+func (_c *MockTransactionRepository_GetLastTransactions_Call) Run(run func(ctx context.Context, clientID int, limit uint)) *MockTransactionRepository_GetLastTransactions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(uint))
 	})
 	return _c
 }
@@ -140,7 +140,7 @@ func (_c *MockTransactionRepository_GetLastTransactions_Call) Return(_a0 []model
 	return _c
 }
 
-func (_c *MockTransactionRepository_GetLastTransactions_Call) RunAndReturn(run func(context.Context, int, int) ([]model.Transaction, error)) *MockTransactionRepository_GetLastTransactions_Call {
+func (_c *MockTransactionRepository_GetLastTransactions_Call) RunAndReturn(run func(context.Context, int, uint) ([]model.Transaction, error)) *MockTransactionRepository_GetLastTransactions_Call {
 	_c.Call.Return(run)
 	return _c
 }

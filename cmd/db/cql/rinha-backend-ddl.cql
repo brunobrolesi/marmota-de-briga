@@ -6,13 +6,11 @@ CREATE TABLE clients (
  );
 
 CREATE TABLE transactions (
-     id uuid,
      client_id int,
      value int,
      type text,
      description text,
      created_at timestamp,
-     PRIMARY KEY (id)
- );
+    PRIMARY KEY (client_id, created_at))
+    WITH CLUSTERING ORDER BY (created_at DESC);
 
-CREATE INDEX clientTransactionIndex ON transactions (client_id);

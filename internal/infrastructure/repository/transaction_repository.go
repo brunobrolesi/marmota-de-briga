@@ -8,8 +8,8 @@ import (
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/gateway"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/models"
-	"github.com/google/uuid"
 	"github.com/scylladb/gocqlx/v2"
+	"github.com/scylladb/gocqlx/v2/qb"
 )
 
 type transactionRepository struct {
@@ -24,7 +24,6 @@ func NewTransactionRepository(client *gocqlx.Session) gateway.TransactionReposit
 
 func (r *transactionRepository) CreateTransaction(ctx context.Context, clientID model.ClientID, value model.MonetaryValue, transactionType model.TransactionType, description string) (*model.Transaction, error) {
 	t := model.Transaction{
-		ID:          uuid.New(),
 		ClientID:    clientID,
 		Value:       value,
 		Type:        transactionType,
@@ -39,6 +38,13 @@ func (r *transactionRepository) CreateTransaction(ctx context.Context, clientID 
 	return &t, nil
 }
 
-func (r *transactionRepository) GetLastTransactions(ctx context.Context, clientID model.ClientID, limit int) ([]model.Transaction, error) {
-	return nil, nil
+func (r *transactionRepository) GetLastTransactions(ctx context.Context, clientID model.ClientID, limit uint) ([]model.Transaction, error) {
+	transactions := []model.Transaction{}
+	q := qb.Select("transactions").Where(qb.Eq("client_id")).Limit(limit).Query(*r.client).Bind(clientID)
+	if err := q.Select(&transactions); err != nil {
+		log.Println("get last transactions fails with: ", err)
+		return nil, err
+	}
+
+	return transactions, nil
 }

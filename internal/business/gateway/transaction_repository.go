@@ -8,5 +8,5 @@ import (
 
 type TransactionRepository interface {
 	CreateTransaction(ctx context.Context, clientID model.ClientID, value model.MonetaryValue, transactionType model.TransactionType, description string) (*model.Transaction, error)
-	GetLastTransactions(ctx context.Context, clientID model.ClientID, limit int) ([]model.Transaction, error)
+	GetLastTransactions(ctx context.Context, clientID model.ClientID, limit uint) ([]model.Transaction, error)
 }

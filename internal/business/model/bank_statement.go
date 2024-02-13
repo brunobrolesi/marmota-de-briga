@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-const TRANSACTIONS_LIMIT = 10
+const TRANSACTIONS_LIMIT uint = 10
 
 type BankStatementBalance struct {
 	Total     MonetaryValue

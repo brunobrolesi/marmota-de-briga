@@ -18,7 +18,7 @@ type CreateTransactionRequestBody struct {
 
 type CreateTransactionResponseBody struct {
 	Limit   model.MonetaryValue `json:"limite"`
-	Balance model.ClientBalance `json:"saldo"`
+	Balance model.MonetaryValue `json:"saldo"`
 }
 
 type createTransactionHandler struct {

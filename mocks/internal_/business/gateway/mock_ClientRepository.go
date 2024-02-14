@@ -82,17 +82,17 @@ func (_c *MockClientRepository_GetClient_Call) RunAndReturn(run func(context.Con
 	return _c
 }
 
-// UpdateBalance provides a mock function with given fields: ctx, clientID, newBalance
-func (_m *MockClientRepository) UpdateBalance(ctx context.Context, clientID int, newBalance model.ClientBalance) error {
-	ret := _m.Called(ctx, clientID, newBalance)
+// UpdateBalance provides a mock function with given fields: ctx, client, newBalance
+func (_m *MockClientRepository) UpdateBalance(ctx context.Context, client *model.Client, newBalance int) error {
+	ret := _m.Called(ctx, client, newBalance)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateBalance")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, model.ClientBalance) error); ok {
-		r0 = rf(ctx, clientID, newBalance)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Client, int) error); ok {
+		r0 = rf(ctx, client, newBalance)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -107,15 +107,15 @@ type MockClientRepository_UpdateBalance_Call struct {
 
 // UpdateBalance is a helper method to define mock.On call
 //   - ctx context.Context
-//   - clientID int
-//   - newBalance model.ClientBalance
-func (_e *MockClientRepository_Expecter) UpdateBalance(ctx interface{}, clientID interface{}, newBalance interface{}) *MockClientRepository_UpdateBalance_Call {
-	return &MockClientRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, clientID, newBalance)}
+//   - client *model.Client
+//   - newBalance int
+func (_e *MockClientRepository_Expecter) UpdateBalance(ctx interface{}, client interface{}, newBalance interface{}) *MockClientRepository_UpdateBalance_Call {
+	return &MockClientRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, client, newBalance)}
 }
 
-func (_c *MockClientRepository_UpdateBalance_Call) Run(run func(ctx context.Context, clientID int, newBalance model.ClientBalance)) *MockClientRepository_UpdateBalance_Call {
+func (_c *MockClientRepository_UpdateBalance_Call) Run(run func(ctx context.Context, client *model.Client, newBalance int)) *MockClientRepository_UpdateBalance_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(model.ClientBalance))
+		run(args[0].(context.Context), args[1].(*model.Client), args[2].(int))
 	})
 	return _c
 }
@@ -125,7 +125,7 @@ func (_c *MockClientRepository_UpdateBalance_Call) Return(_a0 error) *MockClient
 	return _c
 }
 
-func (_c *MockClientRepository_UpdateBalance_Call) RunAndReturn(run func(context.Context, int, model.ClientBalance) error) *MockClientRepository_UpdateBalance_Call {
+func (_c *MockClientRepository_UpdateBalance_Call) RunAndReturn(run func(context.Context, *model.Client, int) error) *MockClientRepository_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

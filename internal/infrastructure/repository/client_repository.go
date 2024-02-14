@@ -37,9 +37,9 @@ func (r *clientRepository) GetClient(ctx context.Context, id int) (*model.Client
 	return &c, nil
 }
 
-func (r *clientRepository) UpdateBalance(ctx context.Context, clientID model.ClientID, newBalance model.ClientBalance) error {
+func (r *clientRepository) UpdateBalance(ctx context.Context, client *model.Client, newBalance model.MonetaryValue) error {
 	c := model.Client{
-		ID:             clientID,
+		ID:             client.ID,
 		AccountBalance: newBalance,
 	}
 

@@ -50,7 +50,7 @@ func TestCreateTransactionHandler(t *testing.T) {
 		// Asserts
 		assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
 		body, _ := io.ReadAll(resp.Body)
-		assert.Equal(t, fiber.ErrUnprocessableEntity.Message, string(body))
+		assert.Equal(t, `{"message":"Unprocessable Entity"}`, string(body))
 	})
 
 	t.Run("should return an 404 if the client id is invalid", func(t *testing.T) {

@@ -43,16 +43,17 @@ func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCre
 		return nil, model.ErrInternalServerError
 	}
 
-	if client.AccountBalance.CanNotReceiveTransaction(input.Value, client.AccountLimit, input.Type) {
-		return nil, model.ErrClientLimitExceeded
+	newBalance, err := client.GetBalanceAfterTransaction(input.Value, input.Type)
+	if err != nil {
+		return nil, err
+
 	}
 
-	client.AccountBalance.AddTransaction(input.Value, input.Type)
-
-	err = uc.clientRepository.UpdateBalance(ctx, input.ClientID, client.AccountBalance)
+	err = uc.clientRepository.UpdateBalance(ctx, client, newBalance)
 	if err != nil {
 		return nil, model.ErrInternalServerError
 	}
+	client.AccountBalance = newBalance
 
 	_, err = uc.transactionRepository.CreateTransaction(ctx, input.ClientID, input.Value, input.Type, input.Description)
 	if err != nil {

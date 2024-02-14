@@ -43,7 +43,6 @@ var (
 			"client_id",
 			"created_at",
 			"description",
-			"id",
 			"type",
 			"value",
 		},
@@ -72,7 +71,6 @@ type TransactionsStruct struct {
 	ClientId    int32
 	CreatedAt   time.Time
 	Description string
-	Id          [16]byte
 	Type        string
 	Value       int32
 }

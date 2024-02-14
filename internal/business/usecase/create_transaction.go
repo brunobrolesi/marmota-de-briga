@@ -35,25 +35,18 @@ func NewCreateTransactionUseCase(
 }
 
 func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCreateTransaction) (*model.Client, error) {
-	client, err := uc.clientRepository.GetClient(ctx, input.ClientID)
-	if err != nil {
-		if errors.Is(err, model.ErrClientNotFound) {
-			return nil, model.ErrClientNotFound
-		}
-		return nil, model.ErrInternalServerError
-	}
-
-	newBalance, err := client.GetBalanceAfterTransaction(input.Value, input.Type)
-	if err != nil {
+	client, err := uc.clientRepository.ACIDUpdateBalance(ctx, input.ClientID, input.Value, input.Type)
+	if errors.Is(err, model.ErrClientNotFound) {
 		return nil, err
-
 	}
 
-	err = uc.clientRepository.UpdateBalance(ctx, client, newBalance)
+	if errors.Is(err, model.ErrClientLimitExceeded) {
+		return nil, err
+	}
+
 	if err != nil {
 		return nil, model.ErrInternalServerError
 	}
-	client.AccountBalance = newBalance
 
 	_, err = uc.transactionRepository.CreateTransaction(ctx, input.ClientID, input.Value, input.Type, input.Description)
 	if err != nil {

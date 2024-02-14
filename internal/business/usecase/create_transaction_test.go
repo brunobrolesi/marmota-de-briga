@@ -42,85 +42,52 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(&model.Client{}, model.ErrClientNotFound).Once()
+		testSuite.ClientRepository.On("ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(nil, model.ErrClientNotFound).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
+		testSuite.ClientRepository.AssertCalled(t, "ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrClientNotFound.Error())
 	})
 
-	t.Run("should return internal server error if get client fails", func(t *testing.T) {
+	t.Run("should return client limit exceed error if transaction exceeds client limit", func(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(&model.Client{}, model.ErrInternalServerError).Once()
+		testSuite.ClientRepository.On("ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(nil, model.ErrClientLimitExceeded).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		assert.Nil(t, got)
-		assert.EqualError(t, err, model.ErrInternalServerError.Error())
-	})
-
-	t.Run("should return client limit exceed if transaction exceeds client limit", func(t *testing.T) {
-		testSuite := setup(t)
-		input := makeInput()
-
-		client := &model.Client{ID: input.ClientID, AccountLimit: 10, AccountBalance: 0}
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-
-		got, err := testSuite.Sut.Execute(context.Background(), input)
-
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
+		testSuite.ClientRepository.AssertCalled(t, "ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrClientLimitExceeded.Error())
 	})
 
-	t.Run("should return client limit exceed if transaction exceeds client limit", func(t *testing.T) {
+	t.Run("should return internal server error if ACIDUpdateBalance fails", func(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, AccountLimit: 10, AccountBalance: 0}
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
+		testSuite.ClientRepository.On("ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(nil, model.ErrInternalServerError).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		assert.Nil(t, got)
-		assert.EqualError(t, err, model.ErrClientLimitExceeded.Error())
-	})
-
-	t.Run("should return internal server error if update balance fails", func(t *testing.T) {
-		testSuite := setup(t)
-		input := makeInput()
-
-		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), client, -100).Return(model.ErrInternalServerError).Once()
-
-		got, err := testSuite.Sut.Execute(context.Background(), input)
-
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), client, -100)
+		testSuite.ClientRepository.AssertCalled(t, "ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrInternalServerError.Error())
 	})
 
-	t.Run("should return internal server error if create transaction fails", func(t *testing.T) {
+	t.Run("should return internal server error if CreateTransaction fails", func(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()
 
-		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), client, -100).Return(nil).Once()
+		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
+		testSuite.ClientRepository.On("ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(client, nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(nil, model.ErrInternalServerError).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), client, -100)
+		testSuite.ClientRepository.AssertCalled(t, "ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type)
 		testSuite.TransactionRepository.AssertCalled(t, "CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description)
 		assert.Nil(t, got)
 		assert.EqualError(t, err, model.ErrInternalServerError.Error())
@@ -132,17 +99,14 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 
 		client := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: 0}
 		transaction := &model.Transaction{ClientID: input.ClientID, Value: input.Value, Type: input.Type, Description: input.Description}
-		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(client, nil).Once()
-		updatedClient := &model.Client{ID: input.ClientID, AccountLimit: 1000, AccountBalance: -100}
-		testSuite.ClientRepository.On("UpdateBalance", context.Background(), client, -100).Return(nil).Once()
+		testSuite.ClientRepository.On("ACIDUpdateBalance", context.Background(), input.ClientID, input.Value, input.Type).Return(client, nil).Once()
 		testSuite.TransactionRepository.On("CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description).Return(transaction, nil).Once()
 
 		got, err := testSuite.Sut.Execute(context.Background(), input)
 
-		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
-		testSuite.ClientRepository.AssertCalled(t, "UpdateBalance", context.Background(), client, -100)
+		testSuite.ClientRepository.AssertCalled(t, "ACIDUpdateBalance", context.Background(), client.ID, input.Value, input.Type)
 		testSuite.TransactionRepository.AssertCalled(t, "CreateTransaction", context.Background(), input.ClientID, input.Value, input.Type, input.Description)
 		assert.Nil(t, err)
-		assert.Equal(t, updatedClient, got)
+		assert.Equal(t, client, got)
 	})
 }

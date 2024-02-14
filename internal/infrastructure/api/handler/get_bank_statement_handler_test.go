@@ -47,6 +47,21 @@ func TestGetBankStatementHandler(t *testing.T) {
 		assert.Equal(t, `{"message":"client not found"}`, string(body))
 	})
 
+	t.Run("should return an 404 if the client id is equal or less than 0", func(t *testing.T) {
+		testSuite := setup(t)
+
+		// http.Request
+		req := httptest.NewRequest("GET", "/clientes/0/extrato", nil)
+
+		// http.Response
+		resp, _ := testSuite.App.Test(req)
+
+		// Asserts
+		assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		assert.Equal(t, `{"message":"client not found"}`, string(body))
+	})
+
 	t.Run("should return an 404 if the client id not exists in db", func(t *testing.T) {
 		testSuite := setup(t)
 

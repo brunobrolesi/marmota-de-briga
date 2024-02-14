@@ -67,6 +67,22 @@ func TestCreateTransactionHandler(t *testing.T) {
 		assert.Equal(t, `{"message":"client not found"}`, string(body))
 	})
 
+	t.Run("should return an 404 if the client id is equal or less than 0", func(t *testing.T) {
+		testSuite := setup(t)
+
+		// http.Request
+		req := httptest.NewRequest("POST", "/clientes/0/transacoes", makeRequestBody())
+		req.Header.Set("Content-Type", "application/json")
+
+		// http.Response
+		resp, _ := testSuite.App.Test(req)
+
+		// Asserts
+		assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		assert.Equal(t, `{"message":"client not found"}`, string(body))
+	})
+
 	t.Run("should return an 404 if the client id is not registered in db", func(t *testing.T) {
 		testSuite := setup(t)
 

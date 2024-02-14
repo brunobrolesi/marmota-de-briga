@@ -25,6 +25,10 @@ func (h *getBankStatementHandler) Handle(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": model.ErrClientNotFound.Error()})
 	}
 
+	if clientID <= 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": model.ErrClientNotFound.Error()})
+	}
+
 	i := &usecase.InputGetBankStatement{
 		ClientID: clientID,
 	}

@@ -39,7 +39,7 @@ func NewCreateTransactionHandler(
 func (h *createTransactionHandler) Handle(c *fiber.Ctx) error {
 	body := new(CreateTransactionRequestBody)
 	if err := c.BodyParser(body); err != nil {
-		return err
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"message": fiber.ErrUnprocessableEntity.Message})
 	}
 
 	if err := h.validator.Struct(body); err != nil {

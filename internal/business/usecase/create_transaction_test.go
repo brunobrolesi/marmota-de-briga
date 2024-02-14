@@ -37,6 +37,20 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 			Description: "any_description",
 		}
 	}
+
+	t.Run("should return client not found error if client not exists", func(t *testing.T) {
+		testSuite := setup(t)
+		input := makeInput()
+
+		testSuite.ClientRepository.On("GetClient", context.Background(), input.ClientID).Return(&model.Client{}, model.ErrClientNotFound).Once()
+
+		got, err := testSuite.Sut.Execute(context.Background(), input)
+
+		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
+		assert.Nil(t, got)
+		assert.EqualError(t, err, model.ErrClientNotFound.Error())
+	})
+
 	t.Run("should return internal server error if get client fails", func(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()

@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"log"
+	"errors"
 
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/gateway"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
@@ -37,12 +37,13 @@ func NewCreateTransactionUseCase(
 func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCreateTransaction) (*model.Client, error) {
 	client, err := uc.clientRepository.GetClient(ctx, input.ClientID)
 	if err != nil {
-		log.Println("error getting client", err)
+		if errors.Is(err, model.ErrClientNotFound) {
+			return nil, model.ErrClientNotFound
+		}
 		return nil, model.ErrInternalServerError
 	}
 
 	if client.AccountBalance.CanNotReceiveTransaction(input.Value, client.AccountLimit, input.Type) {
-		log.Println("client limit exceeded")
 		return nil, model.ErrClientLimitExceeded
 	}
 
@@ -50,13 +51,11 @@ func (uc *createTransactionUseCase) Execute(ctx context.Context, input *InputCre
 
 	err = uc.clientRepository.UpdateBalance(ctx, input.ClientID, client.AccountBalance)
 	if err != nil {
-		log.Println("error updating client balance", err)
 		return nil, model.ErrInternalServerError
 	}
 
 	_, err = uc.transactionRepository.CreateTransaction(ctx, input.ClientID, input.Value, input.Type, input.Description)
 	if err != nil {
-		log.Println("error creating transaction", err)
 		return nil, model.ErrInternalServerError
 	}
 

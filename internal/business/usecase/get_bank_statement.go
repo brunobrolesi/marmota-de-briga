@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/gateway"
@@ -35,7 +35,9 @@ func NewGetBankStatementUseCase(
 func (uc *getBankStatementUseCase) Execute(ctx context.Context, input *InputGetBankStatement) (*model.BankStatement, error) {
 	client, err := uc.clientRepository.GetClient(ctx, input.ClientID)
 	if err != nil {
-		fmt.Println("error getting client", err)
+		if errors.Is(err, model.ErrClientNotFound) {
+			return nil, model.ErrClientNotFound
+		}
 		return nil, model.ErrInternalServerError
 	}
 
@@ -45,7 +47,6 @@ func (uc *getBankStatementUseCase) Execute(ctx context.Context, input *InputGetB
 
 	transactions, err := uc.transactionRepository.GetLastTransactions(ctx, input.ClientID, model.TRANSACTIONS_LIMIT)
 	if err != nil {
-		fmt.Println("error getting transactions", err)
 		return nil, model.ErrInternalServerError
 	}
 

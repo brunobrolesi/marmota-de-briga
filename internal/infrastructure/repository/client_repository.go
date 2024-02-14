@@ -7,6 +7,7 @@ import (
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/gateway"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/models"
+	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/qb"
 )
@@ -27,6 +28,9 @@ func (r *clientRepository) GetClient(ctx context.Context, id int) (*model.Client
 	}
 	q := r.client.Query(models.Clients.Get()).BindStruct(c)
 	if err := q.GetRelease(&c); err != nil {
+		if err == gocql.ErrNotFound {
+			return nil, model.ErrClientNotFound
+		}
 		log.Println("get client fails with: ", err)
 		return nil, err
 	}

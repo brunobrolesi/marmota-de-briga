@@ -42,6 +42,17 @@ func TestGetBankStatementUseCase(t *testing.T) {
 		}
 
 	}
+	t.Run("should return client not found error if client not exits", func(t *testing.T) {
+		testSuite := setup(t)
+		input := makeInput()
+
+		testSuite.ClientRepository.On("GetClient", context.Background(), model.ClientID(1)).Return(nil, model.ErrClientNotFound).Once()
+		got, err := testSuite.Sut.Execute(context.Background(), input)
+
+		testSuite.ClientRepository.AssertCalled(t, "GetClient", context.Background(), input.ClientID)
+		assert.Nil(t, got)
+		assert.EqualError(t, err, model.ErrClientNotFound.Error())
+	})
 	t.Run("should return internal server error if get client fails", func(t *testing.T) {
 		testSuite := setup(t)
 		input := makeInput()

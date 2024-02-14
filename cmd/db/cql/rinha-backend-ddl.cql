@@ -1,11 +1,11 @@
-CREATE TABLE clients (
+CREATE TABLE IF NOT EXISTS clients (
      id int,
      account_limit int,
      account_balance int,
      PRIMARY KEY (id)
  );
 
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
      client_id int,
      value int,
      type text,

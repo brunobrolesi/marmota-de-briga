@@ -12,6 +12,7 @@ func CreateTransactionFactory() handler.Handler {
 	clientRepository := repository.NewClientRepository(config)
 	transactionRepository := repository.NewTransactionRepository(config)
 	uc := usecase.NewCreateTransactionUseCase(clientRepository, transactionRepository)
-	h := handler.NewCreateTransactionHandler(uc)
+	validator := ValidatorFactory()
+	h := handler.NewCreateTransactionHandler(uc, validator)
 	return h
 }

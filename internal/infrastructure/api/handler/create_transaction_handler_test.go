@@ -10,6 +10,7 @@ import (
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/internal/infrastructure/api/handler"
 	mock_usecase "github.com/brunobrolesi/marmota-de-briga/mocks/internal_/business/usecase"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -24,7 +25,8 @@ func TestCreateTransactionHandler(t *testing.T) {
 	setup := func(t *testing.T) TestSuite {
 		app := fiber.New()
 		uc := mock_usecase.NewMockCreateTransactionUseCase(t)
-		h := handler.NewCreateTransactionHandler(uc)
+		validator := validator.New(validator.WithRequiredStructEnabled())
+		h := handler.NewCreateTransactionHandler(uc, validator)
 		app.Post("/clientes/:id/transacoes", h.Handle)
 		return TestSuite{
 			App:                      app,

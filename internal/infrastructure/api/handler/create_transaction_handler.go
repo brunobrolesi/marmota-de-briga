@@ -6,13 +6,14 @@ import (
 
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/usecase"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type CreateTransactionRequestBody struct {
-	Value       int    `json:"valor"`
-	Type        string `json:"tipo"`
-	Description string `json:"descricao"`
+	Value       int    `json:"valor" validate:"required,min=1"`
+	Type        string `json:"tipo" validate:"required,oneof=c d"`
+	Description string `json:"descricao" validate:"required,min=1,max=10"`
 }
 
 type CreateTransactionResponseBody struct {
@@ -22,11 +23,16 @@ type CreateTransactionResponseBody struct {
 
 type createTransactionHandler struct {
 	createTransactionUsecase usecase.CreateTransactionUseCase
+	validator                *validator.Validate
 }
 
-func NewCreateTransactionHandler(createTransactionUsecase usecase.CreateTransactionUseCase) Handler {
+func NewCreateTransactionHandler(
+	createTransactionUsecase usecase.CreateTransactionUseCase,
+	validator *validator.Validate,
+) Handler {
 	return &createTransactionHandler{
 		createTransactionUsecase: createTransactionUsecase,
+		validator:                validator,
 	}
 }
 
@@ -34,6 +40,10 @@ func (h *createTransactionHandler) Handle(c *fiber.Ctx) error {
 	body := new(CreateTransactionRequestBody)
 	if err := c.BodyParser(body); err != nil {
 		return err
+	}
+
+	if err := h.validator.Struct(body); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"message": fiber.ErrUnprocessableEntity.Message})
 	}
 
 	clientID, err := strconv.Atoi(c.Params("id"))

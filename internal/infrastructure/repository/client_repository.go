@@ -2,51 +2,60 @@ package repository
 
 import (
 	"context"
-	"log"
 
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/gateway"
 	"github.com/brunobrolesi/marmota-de-briga/internal/business/model"
-	"github.com/brunobrolesi/marmota-de-briga/models"
 	"github.com/gocql/gocql"
-	"github.com/scylladb/gocqlx/v2"
-	"github.com/scylladb/gocqlx/v2/qb"
+	"github.com/gofiber/fiber/v2/log"
 )
 
+const (
+	queryGetClient     = "SELECT id, account_balance, account_limit FROM clients WHERE id = ?"
+	queryUpdateBalance = "UPDATE clients SET account_balance = ? WHERE id = ?"
+)
+
+type Row = map[string]interface{}
+
 type clientRepository struct {
-	client *gocqlx.Session
+	session            *gocql.Session
+	queryUpdateBalance *gocql.Query
 }
 
-func NewClientRepository(client *gocqlx.Session) gateway.ClientRepository {
+func NewClientRepository(session *gocql.Session) gateway.ClientRepository {
 	return &clientRepository{
-		client: client,
+		session:            session,
+		queryUpdateBalance: session.Query(queryUpdateBalance),
 	}
 }
 
-func (r *clientRepository) GetClient(ctx context.Context, id int) (*model.Client, error) {
-	c := model.Client{
-		ID: id,
-	}
-	q := r.client.Query(models.Clients.Get()).BindStruct(c)
-	if err := q.GetRelease(&c); err != nil {
+func (r *clientRepository) GetClient(ctx context.Context, id model.ClientID) (*model.Client, error) {
+	q := r.session.Query(queryGetClient, id)
+	var c model.Client
+	if err := q.Scan(&c.ID, &c.AccountBalance, &c.AccountLimit); err != nil {
 		if err == gocql.ErrNotFound {
 			return nil, model.ErrClientNotFound
 		}
-		log.Println("get client fails with: ", err)
+		log.Error("get client fails with: ", err)
 		return nil, err
 	}
 	return &c, nil
 }
 
-func (r *clientRepository) UpdateBalance(ctx context.Context, client *model.Client, newBalance model.MonetaryValue) error {
-	c := model.Client{
-		ID:             client.ID,
-		AccountBalance: newBalance,
+func (r *clientRepository) ACIDUpdateBalance(ctx context.Context, clientID model.ClientID, transactionValue model.MonetaryValue, transactionType model.TransactionType) (*model.Client, error) {
+	c, err := r.GetClient(ctx, clientID)
+	if err != nil {
+		return nil, err
+	}
+	newBalance, err := c.GetBalanceAfterTransaction(transactionValue, transactionType)
+	if err != nil {
+		return nil, err
+	}
+	q := r.queryUpdateBalance.Bind(newBalance, clientID).WithContext(ctx)
+	if err := q.Exec(); err != nil {
+		log.Error("update balance fails with:", err)
+		return nil, err
 	}
 
-	q := qb.Update("clients").Set("account_balance").Where(qb.Eq("id")).Query(*r.client).BindStruct(c)
-	if err := q.ExecRelease(); err != nil {
-		log.Println("update client balance fails with: ", err)
-		return err
-	}
-	return nil
+	c.AccountBalance = newBalance
+	return c, nil
 }

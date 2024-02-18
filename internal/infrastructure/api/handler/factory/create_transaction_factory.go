@@ -8,9 +8,9 @@ import (
 )
 
 func CreateTransactionFactory() handler.Handler {
-	config := config.NewScyllaClient(config.KEYSPACE)
-	clientRepository := repository.NewClientRepository(config)
-	transactionRepository := repository.NewTransactionRepository(config)
+	session := config.GetScyllaSession(config.KEYSPACE)
+	clientRepository := repository.NewClientRepository(session)
+	transactionRepository := repository.NewTransactionRepository(session)
 	uc := usecase.NewCreateTransactionUseCase(clientRepository, transactionRepository)
 	validator := ValidatorFactory()
 	h := handler.NewCreateTransactionHandler(uc, validator)

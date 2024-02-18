@@ -23,6 +23,67 @@ func (_m *MockClientRepository) EXPECT() *MockClientRepository_Expecter {
 	return &MockClientRepository_Expecter{mock: &_m.Mock}
 }
 
+// ACIDUpdateBalance provides a mock function with given fields: ctx, clientID, transactionValue, transactionType
+func (_m *MockClientRepository) ACIDUpdateBalance(ctx context.Context, clientID int, transactionValue int, transactionType model.TransactionType) (*model.Client, error) {
+	ret := _m.Called(ctx, clientID, transactionValue, transactionType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ACIDUpdateBalance")
+	}
+
+	var r0 *model.Client
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType) (*model.Client, error)); ok {
+		return rf(ctx, clientID, transactionValue, transactionType)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, model.TransactionType) *model.Client); ok {
+		r0 = rf(ctx, clientID, transactionValue, transactionType)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Client)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, model.TransactionType) error); ok {
+		r1 = rf(ctx, clientID, transactionValue, transactionType)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockClientRepository_ACIDUpdateBalance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ACIDUpdateBalance'
+type MockClientRepository_ACIDUpdateBalance_Call struct {
+	*mock.Call
+}
+
+// ACIDUpdateBalance is a helper method to define mock.On call
+//   - ctx context.Context
+//   - clientID int
+//   - transactionValue int
+//   - transactionType model.TransactionType
+func (_e *MockClientRepository_Expecter) ACIDUpdateBalance(ctx interface{}, clientID interface{}, transactionValue interface{}, transactionType interface{}) *MockClientRepository_ACIDUpdateBalance_Call {
+	return &MockClientRepository_ACIDUpdateBalance_Call{Call: _e.mock.On("ACIDUpdateBalance", ctx, clientID, transactionValue, transactionType)}
+}
+
+func (_c *MockClientRepository_ACIDUpdateBalance_Call) Run(run func(ctx context.Context, clientID int, transactionValue int, transactionType model.TransactionType)) *MockClientRepository_ACIDUpdateBalance_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(model.TransactionType))
+	})
+	return _c
+}
+
+func (_c *MockClientRepository_ACIDUpdateBalance_Call) Return(_a0 *model.Client, _a1 error) *MockClientRepository_ACIDUpdateBalance_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockClientRepository_ACIDUpdateBalance_Call) RunAndReturn(run func(context.Context, int, int, model.TransactionType) (*model.Client, error)) *MockClientRepository_ACIDUpdateBalance_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetClient provides a mock function with given fields: ctx, clientID
 func (_m *MockClientRepository) GetClient(ctx context.Context, clientID int) (*model.Client, error) {
 	ret := _m.Called(ctx, clientID)
@@ -78,54 +139,6 @@ func (_c *MockClientRepository_GetClient_Call) Return(_a0 *model.Client, _a1 err
 }
 
 func (_c *MockClientRepository_GetClient_Call) RunAndReturn(run func(context.Context, int) (*model.Client, error)) *MockClientRepository_GetClient_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UpdateBalance provides a mock function with given fields: ctx, client, newBalance
-func (_m *MockClientRepository) UpdateBalance(ctx context.Context, client *model.Client, newBalance int) error {
-	ret := _m.Called(ctx, client, newBalance)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateBalance")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.Client, int) error); ok {
-		r0 = rf(ctx, client, newBalance)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// MockClientRepository_UpdateBalance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateBalance'
-type MockClientRepository_UpdateBalance_Call struct {
-	*mock.Call
-}
-
-// UpdateBalance is a helper method to define mock.On call
-//   - ctx context.Context
-//   - client *model.Client
-//   - newBalance int
-func (_e *MockClientRepository_Expecter) UpdateBalance(ctx interface{}, client interface{}, newBalance interface{}) *MockClientRepository_UpdateBalance_Call {
-	return &MockClientRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, client, newBalance)}
-}
-
-func (_c *MockClientRepository_UpdateBalance_Call) Run(run func(ctx context.Context, client *model.Client, newBalance int)) *MockClientRepository_UpdateBalance_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*model.Client), args[2].(int))
-	})
-	return _c
-}
-
-func (_c *MockClientRepository_UpdateBalance_Call) Return(_a0 error) *MockClientRepository_UpdateBalance_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockClientRepository_UpdateBalance_Call) RunAndReturn(run func(context.Context, *model.Client, int) error) *MockClientRepository_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -1,27 +1,31 @@
 package config
 
 import (
-	"log"
 	"time"
 
 	"github.com/gocql/gocql"
-	"github.com/scylladb/gocqlx/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 const KEYSPACE = "rinha"
 
-func NewScyllaClient(keyspace string) *gocqlx.Session {
+func GetScyllaSession(keyspace string) *gocql.Session {
 	var err error
-	var session gocqlx.Session
+	var session *gocql.Session
 	for ok := true; ok; ok = err != nil {
 		cluster := gocql.NewCluster("scylla-db")
 		cluster.Keyspace = keyspace
-		session, err = gocqlx.WrapSession(cluster.CreateSession())
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 			time.Sleep(5 * time.Second)
 		}
+		cluster.NumConns = 10
+		cluster.Consistency = gocql.LocalQuorum
+		cluster.RetryPolicy = &gocql.SimpleRetryPolicy{NumRetries: 3}
+		session, err = cluster.CreateSession()
+		if err != nil {
+			log.Error("failed to create session: %v", err)
+		}
 	}
-	return &session
-
+	return session
 }

@@ -13,7 +13,7 @@ services:
       resources:
         limits:
           cpus: "0.3"
-          memory: "12MB"
+          memory: "37MB"
 
   api02:
     <<: *api 
@@ -42,13 +42,19 @@ services:
     hostname: scylla-db
     networks:
       - backend
-    command: --developer-mode 1 --skip-wait-for-gossip-to-settle 0
+    command: --skip-wait-for-gossip-to-settle 0
+    ports:
+      - "7000:7000"
+      - "7001:7001"
+      - "9042:9042"
+      - "9160:9160"
+      - "10000:10000"
     tty: true
     deploy:
       resources:
         limits:
           cpus: "0.55"
-          memory: "510MB"
+          memory: "410MB"
 
 networks:
   backend:

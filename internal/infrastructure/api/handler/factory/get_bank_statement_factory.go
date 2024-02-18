@@ -8,9 +8,9 @@ import (
 )
 
 func GetBankStatementFactory() handler.Handler {
-	config := config.NewScyllaClient(config.KEYSPACE)
-	clientRepository := repository.NewClientRepository(config)
-	transactionRepository := repository.NewTransactionRepository(config)
+	session := config.GetScyllaSession(config.KEYSPACE)
+	clientRepository := repository.NewClientRepository(session)
+	transactionRepository := repository.NewTransactionRepository(session)
 	uc := usecase.NewGetBankStatementUseCase(clientRepository, transactionRepository)
 	h := handler.NewGetBankStatementHandler(uc)
 	return h
